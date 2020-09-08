@@ -3,7 +3,7 @@ var person1 = {firstName:"Bzill2", lastName:"Gzates2", age:12, eyeColor:"blue"};
 var mycars = ["Saab","Volvo","BMW"];
 
 var array = {}
-for(var i = 0;i != 5000; i++){
+for(var i = 0;i != 5; i++){
     var person2 = {firstName:"Bill", lastName:"Gates", age:i, eyeColor:"blue"};
     person2["firstName"] = "long";
     array[i] = person2;

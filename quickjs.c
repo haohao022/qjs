@@ -83,7 +83,7 @@
   32: dump line number table
  */
 //zhang DUMP_BYTECODE
-// #define DUMP_BYTECODE  (39)
+#define DUMP_BYTECODE  (1)
 /* dump the occurence of the automatic GC */
 //#define DUMP_GC
 /* dump objects freed by the garbage collector */
@@ -99,8 +99,8 @@
 //#define DUMP_PROMISE
 //#define DUMP_READ_OBJECT
 
-// #define DEV
-// #define MYTRACE
+#define DEV
+#define MYTRACE
 
 /* test the GC by forcing it before each object allocation */
 //#define FORCE_GC_AT_MALLOC
@@ -16405,6 +16405,10 @@ static JSValue JS_CallInternal(JSContext *caller_ctx, JSValueConst func_obj,
             BREAK;
         CASE(OP_call_constructor):
             {
+                // haohao
+                #ifdef DEV
+                printf("[haohao] new OP_call_constructor object.\n");
+                #endif
                 call_argc = get_u16(pc);
                 pc += 2;
                 call_argv = sp - call_argc;
