@@ -3076,23 +3076,29 @@ static JSValue __JS_AtomToValue(JSContext *ctx, JSAtom atom, BOOL force_string)
     char buf[ATOM_GET_STR_BUF_SIZE];
 
     if (__JS_AtomIsTaggedInt(atom)) {
+        printf("[haohao] __JS_AtomIsTaggedInt.\n");
         snprintf(buf, sizeof(buf), "%u", __JS_AtomToUInt32(atom));
         return JS_NewString(ctx, buf);
     } else {
+        printf("[haohao] __JS_AtomIs not TaggedInt.\n");
         JSRuntime *rt = ctx->rt;
         JSAtomStruct *p;
         assert(atom < rt->atom_size);
         p = rt->atom_array[atom];
         if (p->atom_type == JS_ATOM_TYPE_STRING) {
+            printf("[haohao] p->atom_type == JS_ATOM_TYPE_STRING.\n");
             goto ret_string;
         } else if (force_string) {
+            printf("[haohao] force_string.\n");
             if (p->len == 0 && p->is_wide_char != 0) {
                 /* no description string */
+                printf("[haohao] /* no description string */");
                 p = rt->atom_array[JS_ATOM_empty_string];
             }
         ret_string:
             return JS_DupValue(ctx, JS_MKPTR(JS_TAG_STRING, p));
         } else {
+            printf("[haohao] direct JS_DupValue.\n");
             return JS_DupValue(ctx, JS_MKPTR(JS_TAG_SYMBOL, p));
         }
     }

@@ -1,4 +1,3 @@
-haohao.js:4: function: <null>
   stack_size: 2
   opcodes:
 ;; function() {
@@ -13,7 +12,6 @@ haohao.js:4: function: <null>
         return_undef
 
 
-haohao.js:9: function: hfunc
   locals:
     0: var hfuncobj
   stack_size: 4
@@ -50,22 +48,37 @@ haohao.js:9: function: hfunc
 
 ;; }
 
-haohao.js:16: function: main
+  stack_size: 2
+  opcodes:
+;; function() {
+;;         print("... this is main.internal().\n");
+
+        get_var print
+        push_atom_value "... this is main.internal().\n"
+        call1 1
+
+;;     }
+
+        return_undef
+
+
   locals:
-    0: var harray0
-    1: var hnewstring0
-    2: var hstring0
-    3: var harray1
-    4: var hnewstring1
-    5: var this
-  stack_size: 7
+    0: var hmainobj
+    1: var harray
+    2: var hnewstring
+    3: var hstring
+  stack_size: 5
   opcodes:
 ;; function main() {
+;;     var hmainobj = {owner:"main"};
 
-        push_this
-        put_loc8 5: this
+        object
+        push_atom_value main
+        define_field owner
+        put_loc0 0: hmainobj
 
-;;     var harray0 = ["one", "two", "three", "four", "five"];
+;; 
+;;     var harray = ["one", "two", "three", "four", "five"];
 
         push_atom_value one
         push_atom_value two
@@ -73,58 +86,49 @@ haohao.js:16: function: main
         push_atom_value four
         push_atom_value five
         array_from 5
-        put_loc0 0: harray0
+        put_loc1 1: harray
 
 ;;     
-;;     var hnewstring0 = new String("hnewstring0\n");
+;;     var hnewstring = new String("hnewstring\n");
 
         get_var String
         dup
-        push_atom_value "hnewstring0\n"
+        push_atom_value "hnewstring\n"
         call_constructor 1
-        put_loc1 1: hnewstring0
+        put_loc2 2: hnewstring
 
 ;;     
-;;     var hstring0 = "hstring0\n";
+;;     var hstring = "hstring\n";
 
-        push_atom_value "hstring0\n"
-        put_loc2 2: hstring0
+        push_atom_value "hstring\n"
+        put_loc3 3: hstring
 
-;;     
-;;     var harray1 = ["six", "seven", "eight", "nine", "ten"];
-
-        push_atom_value six
-        push_atom_value seven
-        push_atom_value eight
-        push_atom_value nine
-        push_atom_value ten
-        array_from 5
-        put_loc3 3: harray1
-
-;; 
-;;     var hnewstring1 = new String("hnewstring1\n");
-
-        get_var String
-        dup
-        push_atom_value "hnewstring1\n"
-        call_constructor 1
-        put_loc8 4: hnewstring1
-
-;; 
-;;     this.hstring1 = "hstring1\n";
-
-        get_loc8 5: this
-        push_atom_value "hstring1\n"
-        put_field hstring1
-
-;; 
-;;     // window.hstring2 = "hstring2\n";
 ;; 
 ;;     globalstring = "globalstring\n";
 
         push_atom_value "globalstring\n"
         dup
         put_var globalstring
+        drop
+
+;; 
+;;     main.harray1 = ["six", "seven"];
+
+        get_var main
+        push_atom_value six
+        push_atom_value seven
+        array_from 2
+        put_field harray1
+
+;; 
+;;     internal = function() {
+;;         print("... this is main.internal().\n");
+;;     }
+
+        fclosure8 0: [bytecode <null>]
+        set_name internal
+        dup
+        put_var internal
         drop
 
 ;; 
@@ -156,44 +160,46 @@ haohao.js:16: function: main
         drop
 
 ;;     
-;;     print("...", harray0[0], harray0[3], harray1[1], harray1[4], "\n");
+;;     print("...", hmainobj.owner);
 
         get_var print
         push_atom_value "..."
-        get_loc0 0: harray0
+        get_loc0 0: hmainobj
+        get_field owner
+        call2 2
+        drop
+
+;; 
+;;     print("...", harray[0], harray[3], "\n");
+
+        get_var print
+        push_atom_value "..."
+        get_loc1 1: harray
         push_0 0
         get_array_el
-        get_loc0 0: harray0
+        get_loc1 1: harray
         push_3 3
         get_array_el
-        get_loc3 3: harray1
-        push_1 1
-        get_array_el
-        get_loc3 3: harray1
-        push_4 4
-        get_array_el
         push_atom_value "\n"
-        call 6
+        call 4
         drop
 
 ;;     
-;;     print("...", hnewstring0, hnewstring1);
+;;     print("...", hnewstring);
 
         get_var print
         push_atom_value "..."
-        get_loc1 1: hnewstring0
-        get_loc8 4: hnewstring1
-        call3 3
+        get_loc2 2: hnewstring
+        call2 2
         drop
 
 ;;     
-;;     print("...", hstring0, hstring1);
+;;     print("...", hstring);
 
         get_var print
         push_atom_value "..."
-        get_loc2 2: hstring0
-        get_var hstring1
-        call3 3
+        get_loc3 3: hstring
+        call2 2
         drop
 
 ;;     
@@ -216,21 +222,80 @@ haohao.js:16: function: main
         return_undef
 
 
-haohao.js:1: function: <eval>
+  closure vars:
+    0: x local:arg0 var
+    1: y local:arg1 var
+  stack_size: 2
+  opcodes:
+;; function() {
+;;         return "" + x + " " + y;
+
+        push_empty_string
+        get_var_ref0 0: x
+        add
+        push_atom_value " "
+        add
+        get_var_ref1 1: y
+        add
+        return
+
+;;     }
+
+  args: x y
+  locals:
+    0: var this
+  stack_size: 2
+  opcodes:
+;; function BOX(x, y) {
+
+        push_this
+        put_loc0 0: this
+
+;;     this.x = x;
+
+        get_loc0 0: this
+        get_arg0 0: x
+        put_field x
+
+;;     this.y = y;
+
+        get_loc0 0: this
+        get_arg1 1: y
+        put_field y
+
+;;     this.toString = function() {
+
+        get_loc0 0: this
+
+;;         return "" + x + " " + y;
+;;     };
+
+        fclosure8 0: [bytecode <null>]
+        put_field toString
+
+;; }
+
+        return_undef
+
+
   locals:
     0: var <ret>
-  stack_size: 3
+  stack_size: 4
   opcodes:
         check_define_var hperson,0
         check_define_var hfunc,64
         check_define_var main,64
+        check_define_var BOX,64
+        check_define_var box,0
         define_var hperson,0
         fclosure8 2: [bytecode hfunc]
         define_func hfunc,0
         fclosure8 3: [bytecode main]
         define_func main,0
+        fclosure8 4: [bytecode BOX]
+        define_func BOX,0
+        define_var box,0
         object
-        push_atom_value haohao
         define_field name
         push_const8 0: 1"22"
         define_field age
@@ -244,181 +309,79 @@ haohao.js:1: function: <eval>
         call0 0
         put_loc0 0: "<ret>"
         get_var print
-        push_atom_value "..."
-        get_var hstring1
-        call2 2
+        get_var main
+        get_field harray1
+        call1 1
         put_loc0 0: "<ret>"
+        get_var internal
+        call0 0
+        put_loc0 0: "<ret>"
+        get_var BOX
+        dup
+        push_4 4
+        push_5 5
+        call_constructor 2
+        dup
+        put_var box
+        drop
         get_var print
-        push_atom_value "..."
-        get_var hstring0
-        call2 2
+        get_var box
+        get_field2 toString
+        call_method 0
+        call1 1
         set_loc0 0: "<ret>"
         return
 
 zhang gc _count 1
 JS_RunGC 1
-zhang new OP_object 0xd40defd0 line 2
-zhang OP_define_field 0xd40defd0 
-zhang OP_define_field 0xd40defd0 
-zhang OP_set_name 0xd40e0010 
-zhang OP_define_field 0xd40defd0 
-zhang new OP_array_from 0xd40e33d0 line 17
-[haohao] new OP_call_constructor object.
-zhang new OP_array_from 0xd40e34e0 line 23
-[haohao] new OP_call_constructor object.
-zhang OP_put_field 0xd40cc250 
-zhang OP_get_field 0xd40defd0 
-... haohao 
+zhang new OP_object 0xe6b82260 line 2
+zhang OP_define_field 0xe6b82260 
+zhang OP_define_field 0xe6b82260 
+zhang OP_set_name 0xe6b822b0 
+zhang OP_define_field 0xe6b82260 
+zhang new OP_object 0xe6b811c0 line 17
+zhang OP_define_field 0xe6b811c0 
+zhang new OP_array_from 0xe6b81210 line 19
+zhang new OP_array_from 0xe6b83ea0 line 27
+zhang OP_put_field 0xe6b81b50 
+zhang OP_set_name 0xe6b83ff0 
+zhang OP_get_field 0xe6b82260 
 
-zhang OP_get_field 0xd40defd0 
+zhang OP_get_field 0xe6b82260 
 ... 22 
 
-zhang OP_get_field2 0xd40defd0 
+zhang OP_get_field2 0xe6b82260 
 ... hello
 
-zhang OP_get_field 0xd40df680 
-zhang OP_get_field 0xd40df740 
-zhang OP_get_field 0xd40e00d0 
-zhang OP_get_field 0xd40e0190 
-... one four seven ten 
+zhang OP_get_field 0xe6b811c0 
+... main
+zhang OP_get_field 0xe6b80790 
+zhang OP_get_field 0xe6b808c0 
+... one four 
 
-... hnewstring0
- hnewstring1
+hnewstring
 
-... hstring0
- hstring1
+... hstring
 
 ... globalstring
 
-zhang new OP_object 0xd40e3640 line 10
-zhang OP_define_field 0xd40e3640 
-zhang OP_get_field 0xd40e3640 
+zhang new OP_object 0xe6b840d0 line 10
+zhang OP_define_field 0xe6b840d0 
+zhang OP_get_field 0xe6b840d0 
 ... hfunc 
 
 ... this is hfunc output.
 
-zhang free_object 0xd40e3640 
-zhang free_object 0xd40e33d0 
-zhang free_object 0xd40e3490 
-zhang free_object 0xd40e34e0 
-zhang free_object 0xd40e35a0 
-... hstring1
+zhang OP_get_field 0xe6b81b50 
+six,seven
+... this is main.internal().
 
-zhang free_object 0xd40e0af0 
-zhang free_object 0xd40e35a0 
+zhang OP_put_field 0xe6b811c0 
+zhang OP_put_field 0xe6b811c0 
+zhang OP_put_field 0xe6b811c0 
+zhang OP_get_field2 0xe6b811c0 
+4 5
 zhang gc _count 2
 JS_RunGC 2
-zhang free_object 0xd40cc250 
-zhang free_object 0xd40cc2a0 
-zhang free_object 0xd40d3dd0 
-zhang free_object 0xd40cf760 
-zhang free_object 0xd40cbee0 
-zhang free_object 0xd40d6e90 
-zhang free_object 0xd40d6fa0 
-zhang free_object 0xd40cfd80 
-zhang free_object 0xd40d1480 
-zhang free_object 0xd40d6130 
-zhang free_object 0xd40d3840 
-zhang free_object 0xd40da440 
-zhang free_object 0xd40da4d0 
-zhang free_object 0xd40d9e20 
-zhang free_object 0xd40d9ec0 
-zhang free_object 0xd40ce5b0 
-zhang free_object 0xd40d59a0 
-zhang free_object 0xd40d5bc0 
-zhang free_object 0xd40cbdc0 
-zhang free_object 0xd40cc390 
-zhang free_object 0xd40cb870 
-zhang free_object 0xd40cc490 
-zhang free_object 0xd40cb960 
-zhang free_object 0xd40cdc10 
-zhang free_object 0xd40cb9e0 
-zhang free_object 0xd40cdac0 
-zhang free_object 0xd40cba60 
-zhang free_object 0xd40cddd0 
-zhang free_object 0xd40cbae0 
-zhang free_object 0xd40cdf40 
-zhang free_object 0xd40cbb60 
-zhang free_object 0xd40ce010 
-zhang free_object 0xd40cbbe0 
-zhang free_object 0xd40ce0e0 
-zhang free_object 0xd40cbc60 
-zhang free_object 0xd40ce380 
-zhang free_object 0xd40d0470 
-zhang free_object 0xd40d0570 
-zhang free_object 0xd40d0d10 
-zhang free_object 0xd40d0d90 
-zhang free_object 0xd40d0e60 
-zhang free_object 0xd40d0eb0 
-zhang free_object 0xd40ca8c0 
-zhang free_object 0xd40d36d0 
-zhang free_object 0xd40d3fd0 
-zhang free_object 0xd40d4020 
-zhang free_object 0xd40d61b0 
-zhang free_object 0xd40d6260 
-zhang free_object 0xd40d62b0 
-zhang free_object 0xd40d69f0 
-zhang free_object 0xd40d6a40 
-zhang free_object 0xd40d6d30 
-zhang free_object 0xd40d6df0 
-zhang free_object 0xd40d6e40 
-zhang free_object 0xd40d6ee0 
-zhang free_object 0xd40d7020 
-zhang free_object 0xd40d7110 
-zhang free_object 0xd40d7970 
-zhang free_object 0xd40d7ab0 
-zhang free_object 0xd40d8530 
-zhang free_object 0xd40d85b0 
-zhang free_object 0xd40d8650 
-zhang free_object 0xd40d86d0 
-zhang free_object 0xd40d8770 
-zhang free_object 0xd40d87f0 
-zhang free_object 0xd40d8890 
-zhang free_object 0xd40d8910 
-zhang free_object 0xd40d89b0 
-zhang free_object 0xd40d8a30 
-zhang free_object 0xd40d8ad0 
-zhang free_object 0xd40d8b50 
-zhang free_object 0xd40d8bf0 
-zhang free_object 0xd40d8c70 
-zhang free_object 0xd40d8d10 
-zhang free_object 0xd40d8d90 
-zhang free_object 0xd40d8e30 
-zhang free_object 0xd40d8eb0 
-zhang free_object 0xd40d8f50 
-zhang free_object 0xd40d8fd0 
-zhang free_object 0xd40d9070 
-zhang free_object 0xd40d90f0 
-zhang free_object 0xd40d9190 
-zhang free_object 0xd40d9240 
-zhang free_object 0xd40da520 
-zhang free_object 0xd40da6e0 
-zhang free_object 0xd40da7e0 
-zhang free_object 0xd40dab00 
-zhang free_object 0xd40dadc0 
-zhang free_object 0xd40dae60 
-zhang free_object 0xd40cb770 
-zhang free_object 0xd40cf5f0 
-zhang free_object 0xd40cc0e0 
-zhang free_object 0xd40d3e20 
-zhang free_object 0xd40d3ea0 
-zhang free_object 0xd40ce4e0 
-zhang free_object 0xd40d9e70 
-zhang free_object 0xd40d9f10 
-zhang free_object 0xd40da570 
-zhang free_object 0xd40da5f0 
-zhang free_object 0xd40da3c0 
-zhang free_object 0xd40cd1b0 
-zhang free_object 0xd40daa40 
-zhang free_object 0xd40d8390 
-zhang free_object 0xd40cc160 
-zhang free_object 0xd40d7ba0 
-zhang free_object 0xd40d8410 
-zhang free_object 0xd40e0b40 
-zhang free_object 0xd40c7f70 
-zhang free_object 0xd40df7c0 
-zhang free_object 0xd40defd0 
-zhang free_object 0xd40e0010 
-zhang free_object 0xd40c7e80 
-zhang free_object 0xd40e35f0 
-zhang free_object 0xd40e0af0 
+JS_RunGC obj: 0x7fffe6b83ea0 line:27 flag:0
+JS_RunGC obj: 0x7fffe6b81210 line:19 flag:0

@@ -14,31 +14,33 @@ function hfunc() {
 }
 
 function main() {
-    var harray0 = ["one", "two", "three", "four", "five"];
-    
-    var hnewstring0 = new String("hnewstring0\n");
-    
-    var hstring0 = "hstring0\n";
-    
-    var harray1 = ["six", "seven", "eight", "nine", "ten"];
+    var hmainobj = {owner:"main"};
 
-    var hnewstring1 = new String("hnewstring1\n");
-
-    this.hstring1 = "hstring1\n";
-
-    // window.hstring2 = "hstring2\n";
+    var harray = ["one", "two", "three", "four", "five"];
+    
+    var hnewstring = new String("hnewstring\n");
+    
+    var hstring = "hstring\n";
 
     globalstring = "globalstring\n";
+
+    main.harray1 = ["six", "seven"];
+
+    internal = function() {
+        print("... this is main.internal().\n");
+    }
 
     print("...", hperson.name, "\n");
     print("...", hperson.age, "\n");
     hperson.sayhello();
     
-    print("...", harray0[0], harray0[3], harray1[1], harray1[4], "\n");
+    print("...", hmainobj.owner);
+
+    print("...", harray[0], harray[3], "\n");
     
-    print("...", hnewstring0, hnewstring1);
+    print("...", hnewstring);
     
-    print("...", hstring0, hstring1);
+    print("...", hstring);
     
     print("...", globalstring);
 
@@ -46,6 +48,29 @@ function main() {
 }
 
 main();
-// print("...", hstring2);
-print("...", hstring1);
-print("...", hstring0);
+print(main.harray1);
+internal();
+
+
+function main() {
+    var hnewstring = new String("hnewstring\n");
+    
+    var hstring = "hstring\n";
+
+    globalstring = "globalstring\n";
+}
+
+function BOX(x, y) {
+    this.x = x;
+    this.y = y;
+    this.toString = function() {
+        return "" + x + " " + y;
+    };
+}
+
+var box = new BOX(4, 5);
+
+print(box.toString());
+
+
+
