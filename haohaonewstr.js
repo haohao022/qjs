@@ -4,21 +4,24 @@ var hstring = "hstring\n";
 
 var hnewstring1 = new String("hnewstring1\n");
 
+var obj = {one: "1", two: "2"};
+
 function output() {
-    print(hnewstring, hstring, hnewstring1, "\n");
+    print(hnewstring, hstring, hnewstring1, obj, "\n");
 }
 
 output();
-print("--------------");
 
-var harr0 = [1, 2, 3, 4];
-var harr1 = harr0;
+// function foo(n) {
+// 	if (n == 0)
+// 		return 1;
+// 	return n *foo(n - 1);
+// }
 
-harr1[0] = 0;
-print(harr0);
-print(harr1);
+// var arr = ["one", "two", "three", "four"];
 
-var hperson0 = {name : "haohao", age : "22"};
-var hperson1 = hperson0;
-hperson1.name = "hhh";
-print(hperson0.name, hperson1.name);
+// for (let i = 0; i < 4; i++) {
+// 	console.log(arr[i]);
+// }
+
+// console.log(foo(10));
