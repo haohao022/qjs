@@ -124,7 +124,7 @@ else
 LDEXPORT=-rdynamic
 endif
 
-PROGS=qjs$(EXE) qjsc$(EXE) run-test262
+PROGS=qjs$(EXE) qjs-trace$(EXE) qjsc$(EXE) run-test262
 ifneq ($(CROSS_PREFIX),)
 QJSC_CC=gcc
 QJSC=./host-qjsc
@@ -176,6 +176,9 @@ $(OBJDIR):
 
 qjs$(EXE): $(QJS_OBJS)
 	$(CC) $(LDFLAGS) $(LDEXPORT) -o $@ $^ $(LIBS)
+
+qjs-trace$(EXE): $(QJS_OBJS)
+	$(CC) -DMYTRACE $(LDFLAGS) $(LDEXPORT) -o $@ $^ $(LIBS)
 
 qjs-debug$(EXE): $(patsubst %.o, %.debug.o, $(QJS_OBJS))
 	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
