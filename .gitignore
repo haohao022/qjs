@@ -4,6 +4,7 @@ out.c
 
 *.a
 *.o
+*.out
 *.d
 *~
 jscompress
@@ -28,4 +29,4 @@ run-test262-debug
 run-test262-32
 
 haohao*
-hello.js
+hello*
