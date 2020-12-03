@@ -83,7 +83,7 @@
   32: dump line number table
  */
 //zhang DUMP_BYTECODE
-// #define DUMP_BYTECODE  (39)
+#define DUMP_BYTECODE  (1)
 /* dump the occurence of the automatic GC */
 //#define DUMP_GC
 /* dump objects freed by the garbage collector */
@@ -99,8 +99,8 @@
 //#define DUMP_PROMISE
 //#define DUMP_READ_OBJECT
 
-// #define DEV
-// #define MYTRACE
+ #define DEV
+ #define MYTRACE
 
 /* test the GC by forcing it before each object allocation */
 //#define FORCE_GC_AT_MALLOC
@@ -344,7 +344,7 @@ int get_obj_flag(JSRuntime *rt,JSObject *obj){
     uint32_t offset = (((uintptr_t)obj - (uintptr_t)rt->heap_start ) >> LOG);
     if(offset > rt->mmap_size) return -1;
     #ifdef DEV
-    printf("set_obj_flag %x\n",obj);
+    printf("get_obj_flag %x\n",obj);
     #endif
     return mmap_p[offset].flag;
 }
@@ -3076,23 +3076,29 @@ static JSValue __JS_AtomToValue(JSContext *ctx, JSAtom atom, BOOL force_string)
     char buf[ATOM_GET_STR_BUF_SIZE];
 
     if (__JS_AtomIsTaggedInt(atom)) {
+        //printf("[haohao] __JS_AtomIsTaggedInt.\n");
         snprintf(buf, sizeof(buf), "%u", __JS_AtomToUInt32(atom));
         return JS_NewString(ctx, buf);
     } else {
+        //printf("[haohao] __JS_AtomIs not TaggedInt.\n");
         JSRuntime *rt = ctx->rt;
         JSAtomStruct *p;
         assert(atom < rt->atom_size);
         p = rt->atom_array[atom];
         if (p->atom_type == JS_ATOM_TYPE_STRING) {
+            //printf("[haohao] p->atom_type == JS_ATOM_TYPE_STRING.\n");
             goto ret_string;
         } else if (force_string) {
+            //printf("[haohao] force_string.\n");
             if (p->len == 0 && p->is_wide_char != 0) {
                 /* no description string */
+                //printf("[haohao] /* no description string */");
                 p = rt->atom_array[JS_ATOM_empty_string];
             }
         ret_string:
             return JS_DupValue(ctx, JS_MKPTR(JS_TAG_STRING, p));
         } else {
+            //printf("[haohao] direct JS_DupValue.\n");
             return JS_DupValue(ctx, JS_MKPTR(JS_TAG_SYMBOL, p));
         }
     }
@@ -5481,6 +5487,17 @@ static void add_gc_object(JSRuntime *rt, JSGCObjectHeader *h,
     // if(type == JS_GC_OBJ_TYPE_JS_OBJECT)
     //     h->dummy1=233;
     //<<
+    #ifdef DEV
+    const char *JSGCObjectTypeEnumName[] = {
+        "JS_GC_OBJ_TYPE_JS_OBJECT",
+        "JS_GC_OBJ_TYPE_FUNCTION_BYTECODE",
+        "JS_GC_OBJ_TYPE_SHAPE",
+        "JS_GC_OBJ_TYPE_VAR_REF",
+        "JS_GC_OBJ_TYPE_ASYNC_FUNCTION",
+        "JS_GC_OBJ_TYPE_JS_CONTEXT",
+    };
+    printf("haohao add_gc_object %s\n", JSGCObjectTypeEnumName[type]);
+    #endif
     h->mark = 0;
     h->gc_obj_type = type;
     list_add_tail(&h->link, &rt->gc_obj_list);
@@ -5747,7 +5764,7 @@ void JS_RunGC(JSRuntime *rt)
             int line = get_obj_line_info(rt,(JSObject *)p); 
             int flag = get_obj_flag(rt,(JSObject *)p);
             if(!flag && line != 0){
-                printf("JS_RunGC obj: %p line:%d flag:%d\n",p,line,flag);
+                printf("JS_RunGC obj leak: %p line:%d flag:%d\n",p,line,flag);
             }
             // else if(line != 0)
             // {
@@ -16412,6 +16429,14 @@ static JSValue JS_CallInternal(JSContext *caller_ctx, JSValueConst func_obj,
                 ret_val = JS_CallConstructorInternal(ctx, call_argv[-2],
                                                      call_argv[-1],
                                                      call_argc, call_argv, 0);
+                #ifdef MYTRACE
+                void *p = JS_VALUE_GET_PTR(ret_val);
+                int le = find_line_num(ctx, b, pc - pc_s);
+                set_obj_line_info(rt, p, le);
+                #ifdef DEV
+                printf("haohao new OP_call_constructor %#x line %d\n", JS_VALUE_GET_PTR(ret_val), le);
+                #endif
+                #endif
                 if (unlikely(JS_IsException(ret_val)))
                     goto exception;
                 for(i = -2; i < call_argc; i++)
