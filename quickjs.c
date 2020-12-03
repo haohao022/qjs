@@ -99,8 +99,8 @@
 //#define DUMP_PROMISE
 //#define DUMP_READ_OBJECT
 
-// #define DEV
-// #define MYTRACE
+ #define DEV
+ #define MYTRACE
 
 /* test the GC by forcing it before each object allocation */
 //#define FORCE_GC_AT_MALLOC
@@ -344,7 +344,7 @@ int get_obj_flag(JSRuntime *rt,JSObject *obj){
     uint32_t offset = (((uintptr_t)obj - (uintptr_t)rt->heap_start ) >> LOG);
     if(offset > rt->mmap_size) return -1;
     #ifdef DEV
-    printf("set_obj_flag %x\n",obj);
+    printf("get_obj_flag %x\n",obj);
     #endif
     return mmap_p[offset].flag;
 }
@@ -5487,6 +5487,17 @@ static void add_gc_object(JSRuntime *rt, JSGCObjectHeader *h,
     // if(type == JS_GC_OBJ_TYPE_JS_OBJECT)
     //     h->dummy1=233;
     //<<
+    #ifdef DEV
+    const char *JSGCObjectTypeEnumName[] = {
+        "JS_GC_OBJ_TYPE_JS_OBJECT",
+        "JS_GC_OBJ_TYPE_FUNCTION_BYTECODE",
+        "JS_GC_OBJ_TYPE_SHAPE",
+        "JS_GC_OBJ_TYPE_VAR_REF",
+        "JS_GC_OBJ_TYPE_ASYNC_FUNCTION",
+        "JS_GC_OBJ_TYPE_JS_CONTEXT",
+    };
+    printf("haohao add_gc_object %s\n", JSGCObjectTypeEnumName[type]);
+    #endif
     h->mark = 0;
     h->gc_obj_type = type;
     list_add_tail(&h->link, &rt->gc_obj_list);
@@ -16411,10 +16422,6 @@ static JSValue JS_CallInternal(JSContext *caller_ctx, JSValueConst func_obj,
             BREAK;
         CASE(OP_call_constructor):
             {
-                // haohao
-                #ifdef DEV
-                // printf("[haohao] new OP_call_constructor object.\n");
-                #endif
                 call_argc = get_u16(pc);
                 pc += 2;
                 call_argv = sp - call_argc;
@@ -16422,6 +16429,14 @@ static JSValue JS_CallInternal(JSContext *caller_ctx, JSValueConst func_obj,
                 ret_val = JS_CallConstructorInternal(ctx, call_argv[-2],
                                                      call_argv[-1],
                                                      call_argc, call_argv, 0);
+                #ifdef MYTRACE
+                void *p = JS_VALUE_GET_PTR(ret_val);
+                int le = find_line_num(ctx, b, pc - pc_s);
+                set_obj_line_info(rt, p, le);
+                #ifdef DEV
+                printf("haohao new OP_call_constructor %#x line %d\n", JS_VALUE_GET_PTR(ret_val), le);
+                #endif
+                #endif
                 if (unlikely(JS_IsException(ret_val)))
                     goto exception;
                 for(i = -2; i < call_argc; i++)
