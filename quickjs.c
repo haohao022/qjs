@@ -5764,7 +5764,7 @@ void JS_RunGC(JSRuntime *rt)
             int line = get_obj_line_info(rt,(JSObject *)p); 
             int flag = get_obj_flag(rt,(JSObject *)p);
             if(!flag && line != 0){
-                printf("JS_RunGC obj: %p line:%d flag:%d\n",p,line,flag);
+                printf("JS_RunGC obj leak: %p line:%d flag:%d\n",p,line,flag);
             }
             // else if(line != 0)
             // {
