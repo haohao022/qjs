@@ -28,4 +28,8 @@ qjs-debug
 run-test262-debug
 run-test262-32
 
+.vscode/
 local_test/
+test262_errors.txt
+test262_report.txt
+test262o_errors.txt
